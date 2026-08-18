@@ -1,0 +1,3246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>活动资源计算器</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 40px 20px;
+      font-family:
+        "Microsoft YaHei",
+        "PingFang SC",
+        Arial,
+        sans-serif;
+      color: #1f2937;
+      background:
+        linear-gradient(
+          135deg,
+          #eff6ff 0%,
+          #f8fafc 48%,
+          #fff7ed 100%
+        );
+    }
+
+    button,
+    input,
+    select {
+      font-family: inherit;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .header {
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0 0 12px;
+      font-size: 36px;
+      color: #111827;
+    }
+
+    .header p {
+      max-width: 760px;
+      margin: 0 auto;
+      font-size: 15px;
+      line-height: 1.8;
+      color: #6b7280;
+    }
+
+    .panel {
+      padding: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 24px 60px rgba(31, 41, 55, 0.1);
+    }
+
+    .form-section {
+      margin-bottom: 28px;
+    }
+
+    .section-title {
+      margin: 0 0 8px;
+      font-size: 19px;
+      color: #111827;
+    }
+
+    .section-description {
+      margin: 0 0 16px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #6b7280;
+    }
+
+    .input-grid,
+    .date-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 9px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      height: 52px;
+      padding: 0 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 11px;
+      outline: none;
+      background: #ffffff;
+      font-size: 16px;
+      color: #111827;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: #2563eb;
+      box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .identity-section {
+      padding: 22px;
+      border: 1px solid #dbeafe;
+      border-radius: 15px;
+      background: #f8fbff;
+    }
+
+    .identity-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .identity-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 150px;
+      padding: 13px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 13px;
+      cursor: pointer;
+      background: #ffffff;
+      transition:
+        border-color 0.2s,
+        background 0.2s,
+        transform 0.2s;
+    }
+
+    .identity-option:hover {
+      border-color: #93c5fd;
+      transform: translateY(-1px);
+    }
+
+    .identity-option:has(input:checked) {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .identity-option input {
+      width: 21px;
+      height: 21px;
+      margin: 2px 0 0;
+      cursor: pointer;
+      accent-color: #2563eb;
+    }
+
+    .identity-name {
+      display: block;
+      font-size: 16px;
+      font-weight: 800;
+      color: #1f2937;
+    }
+
+    .activity-section {
+      padding: 22px;
+      border: 1px solid #fde68a;
+      border-radius: 15px;
+      background: #fffbeb;
+    }
+
+    .activity-tip {
+      margin: 14px 0 0;
+      font-size: 13px;
+      line-height: 1.75;
+      color: #92400e;
+    }
+
+    .activity-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .activity-grid .field:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .tier-options {
+      display: flex;
+      min-height: 52px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .tier-option {
+      display: flex;
+      flex: 1;
+      min-height: 52px;
+      padding: 0 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 11px;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+      background: #fff;
+      font-weight: 700;
+    }
+
+    .tier-option:has(input:checked) {
+      border-color: #f59e0b;
+      background: #fff7ed;
+    }
+
+    .tier-option input {
+      accent-color: #f59e0b;
+    }
+
+    .activity-summary {
+      margin: 16px 0 0;
+      padding: 13px 15px;
+      border-radius: 11px;
+      background: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.7;
+      color: #92400e;
+    }
+
+    .tip {
+      margin: 18px 0 0;
+      padding: 14px 16px;
+      border-radius: 11px;
+      background: #f3f4f6;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #6b7280;
+    }
+
+    .primary-action {
+      margin-top: 26px;
+    }
+
+    .primary-button {
+      width: 100%;
+      height: 60px;
+      border: 0;
+      border-radius: 13px;
+      cursor: pointer;
+      color: #ffffff;
+      background:
+        linear-gradient(135deg, #2563eb, #1d4ed8);
+      font-size: 18px;
+      font-weight: 800;
+      box-shadow:
+        0 10px 24px rgba(37, 99, 235, 0.2);
+      transition:
+        transform 0.15s,
+        opacity 0.15s;
+    }
+
+    .primary-button:hover {
+      opacity: 0.94;
+    }
+
+    .primary-button:active {
+      transform: scale(0.99);
+    }
+
+    .reset-area {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px dashed #d1d5db;
+      text-align: center;
+    }
+
+    .reset-button {
+      height: 40px;
+      padding: 0 18px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      cursor: pointer;
+      color: #6b7280;
+      background: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .reset-button:hover {
+      border-color: #fca5a5;
+      color: #b91c1c;
+      background: #fef2f2;
+    }
+
+    .message {
+      display: none;
+      margin-top: 22px;
+      padding: 15px 17px;
+      border: 1px solid #fecaca;
+      border-radius: 11px;
+      background: #fef2f2;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #b91c1c;
+    }
+
+    .result {
+      display: none;
+      margin-top: 34px;
+      padding-top: 30px;
+      border-top: 2px solid #e5e7eb;
+      scroll-margin-top: 20px;
+    }
+
+    .result-title {
+      margin: 0 0 7px;
+      font-size: 26px;
+      color: #111827;
+    }
+
+    .result-range {
+      margin: 0 0 22px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #6b7280;
+    }
+
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .plan-card {
+      overflow: hidden;
+      min-height: 330px;
+      border: 2px solid #bfdbfe;
+      border-radius: 18px;
+      background: #ffffff;
+    }
+
+    .plan-card.paint-plan {
+      border-color: #fed7aa;
+    }
+
+    .plan-header {
+      min-height: 120px;
+      padding: 22px;
+      background:
+        linear-gradient(135deg, #dbeafe, #eff6ff);
+    }
+
+    .paint-plan .plan-header {
+      background:
+        linear-gradient(135deg, #ffedd5, #fff7ed);
+    }
+
+    .plan-name {
+      margin: 0 0 8px;
+      font-size: 22px;
+      color: #1d4ed8;
+    }
+
+    .paint-plan .plan-name {
+      color: #c2410c;
+    }
+
+    .plan-description {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.75;
+      color: #6b7280;
+    }
+
+    .plan-resources {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      padding: 20px;
+    }
+
+    .resource-box {
+      display: flex;
+      min-height: 155px;
+      padding: 20px 12px;
+      border-radius: 14px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .resource-box.diamond {
+      color: #1d4ed8;
+      background: #eff6ff;
+    }
+
+    .resource-box.paint {
+      color: #c2410c;
+      background: #fff7ed;
+    }
+
+    .resource-number {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1.15;
+      word-break: break-all;
+    }
+
+    .resource-label {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .plan-note {
+      margin: 0 20px 20px;
+      padding: 14px;
+      border-radius: 11px;
+      background: #f3f4f6;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #6b7280;
+    }
+
+    .paint-plan .plan-note {
+      background: #fffbeb;
+      color: #92400e;
+    }
+
+    .assessment-section {
+      margin-top: 30px;
+    }
+
+    .assessment-title {
+      margin: 0 0 15px;
+      font-size: 21px;
+      color: #111827;
+    }
+
+    .warning-card {
+      padding: 24px;
+      border: 2px solid transparent;
+      border-radius: 17px;
+    }
+
+    .warning-card.good {
+      border-color: #86efac;
+      background: #f0fdf4;
+    }
+
+    .warning-card.caution {
+      border-color: #fde047;
+      background: #fefce8;
+    }
+
+    .warning-card.danger {
+      border-color: #fdba74;
+      background: #fff7ed;
+    }
+
+    .warning-card.critical {
+      border-color: #fca5a5;
+      background: #fef2f2;
+    }
+
+    .warning-level {
+      display: inline-flex;
+      min-height: 32px;
+      margin-bottom: 13px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .good .warning-level {
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    .caution .warning-level {
+      color: #854d0e;
+      background: #fef9c3;
+    }
+
+    .danger .warning-level {
+      color: #9a3412;
+      background: #ffedd5;
+    }
+
+    .critical .warning-level {
+      color: #991b1b;
+      background: #fee2e2;
+    }
+
+    .warning-heading {
+      margin: 0 0 10px;
+      font-size: 22px;
+      color: #111827;
+    }
+
+    .warning-text {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.9;
+      color: #4b5563;
+    }
+
+    .assessment-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 13px;
+      margin-top: 17px;
+    }
+
+    .assessment-item {
+      min-height: 120px;
+      padding: 18px 12px;
+      border: 1px solid rgba(209, 213, 219, 0.75);
+      border-radius: 13px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .assessment-number {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 25px;
+      font-weight: 900;
+      color: #111827;
+      word-break: break-all;
+    }
+
+    .assessment-label {
+      display: block;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #6b7280;
+    }
+
+    .future-card {
+      margin-top: 18px;
+      padding: 22px;
+      border: 1px solid #c7d2fe;
+      border-radius: 16px;
+      background: #f5f7ff;
+    }
+
+    .future-card h4 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      color: #3730a3;
+    }
+
+    .future-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.9;
+      color: #4b5563;
+    }
+
+    .rerun-card {
+      display: none;
+      margin-top: 18px;
+      padding: 22px;
+      border: 1px solid #f9a8d4;
+      border-radius: 16px;
+      background: #fdf2f8;
+    }
+
+    .rerun-card h4 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      color: #9d174d;
+    }
+
+    .rerun-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.9;
+      color: #4b5563;
+    }
+
+    details.fold-section {
+      margin-top: 24px;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      background: #ffffff;
+    }
+
+    details.fold-section summary {
+      position: relative;
+      padding: 18px 48px 18px 18px;
+      cursor: pointer;
+      list-style: none;
+      font-size: 16px;
+      font-weight: 800;
+      color: #374151;
+      user-select: none;
+    }
+
+    details.fold-section summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.fold-section summary::after {
+      position: absolute;
+      top: 50%;
+      right: 18px;
+      content: "展开";
+      transform: translateY(-50%);
+      font-size: 12px;
+      font-weight: 700;
+      color: #6b7280;
+    }
+
+    details.fold-section[open] summary::after {
+      content: "收起";
+    }
+
+    .fold-content {
+      padding: 0 18px 20px;
+      border-top: 1px solid #f3f4f6;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding-top: 18px;
+    }
+
+    .detail-card {
+      min-height: 118px;
+      padding: 17px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      text-align: center;
+      background: #f9fafb;
+    }
+
+    .detail-number {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 23px;
+      font-weight: 900;
+      color: #1f2937;
+      word-break: break-all;
+    }
+
+    .detail-label {
+      display: block;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #6b7280;
+    }
+
+    .detail-note {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #9ca3af;
+    }
+
+    .rules-list {
+      margin: 18px 0 0;
+      padding-left: 22px;
+      font-size: 14px;
+      line-height: 1.95;
+      color: #6b7280;
+    }
+
+    @media (max-width: 900px) {
+      .assessment-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 24px 14px;
+      }
+
+      .header h1 {
+        font-size: 29px;
+      }
+
+      .panel {
+        padding: 22px 17px;
+      }
+
+      .input-grid,
+      .date-grid,
+      .activity-grid,
+      .plan-grid,
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .plan-card {
+        min-height: auto;
+      }
+
+      .resource-box {
+        min-height: 135px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .plan-resources,
+      .assessment-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .resource-number {
+        font-size: 34px;
+      }
+    }
+
+    /* Soft blue visual theme */
+    :root {
+      --ink: #34435a;
+      --muted: #7f8da1;
+      --blue: #6698ce;
+      --blue-deep: #477fb9;
+      --blue-soft: #e8f2fc;
+      --line: rgba(122, 157, 194, 0.22);
+      --glass: rgba(255, 255, 255, 0.78);
+      --warm: #e99472;
+      --warm-soft: #fff2eb;
+    }
+
+    body {
+      position: relative;
+      overflow-x: hidden;
+      padding: 54px 22px 70px;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 9%, rgba(255,255,255,.52) 0 24px, transparent 25px),
+        radial-gradient(circle at 94% 17%, rgba(255,255,255,.32) 0 33px, transparent 34px),
+        radial-gradient(circle at 18% 57%, rgba(255,255,255,.28) 0 42px, transparent 43px),
+        radial-gradient(circle at 88% 78%, rgba(255,255,255,.3) 0 54px, transparent 55px),
+        linear-gradient(180deg, #bcd7f0 0%, #dceaf7 48%, #edf5fb 100%);
+      background-attachment: fixed;
+    }
+
+    body::before,
+    body::after {
+      position: fixed;
+      z-index: -1;
+      width: 330px;
+      height: 330px;
+      border-radius: 50%;
+      content: "";
+      filter: blur(3px);
+      pointer-events: none;
+    }
+
+    body::before {
+      top: -145px;
+      left: -110px;
+      background: rgba(255,255,255,.18);
+    }
+
+    body::after {
+      right: -150px;
+      bottom: -130px;
+      background: rgba(120,169,216,.13);
+    }
+
+    .page { max-width: 1040px; }
+
+    .header {
+      margin-bottom: 26px;
+      text-align: left;
+    }
+
+    .header::before {
+      display: inline-flex;
+      width: 44px;
+      height: 44px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 15px;
+      align-items: center;
+      justify-content: center;
+      content: "◇";
+      color: var(--blue-deep);
+      background: rgba(255,255,255,.56);
+      box-shadow: 0 10px 28px rgba(67,108,151,.12);
+      font-size: 23px;
+    }
+
+    .header h1 {
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 35px;
+      letter-spacing: .02em;
+    }
+
+    .header p {
+      max-width: none;
+      margin: 0;
+      color: rgba(52,67,90,.62);
+      font-size: 14px;
+    }
+
+    .panel {
+      padding: 28px;
+      border: 1px solid rgba(255,255,255,.82);
+      border-radius: 30px;
+      background: rgba(249,252,255,.78);
+      box-shadow: 0 26px 70px rgba(64,96,133,.16);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    #calculatorForm {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .form-section {
+      margin: 0;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 23px;
+      background: rgba(255,255,255,.66);
+      box-shadow: 0 12px 32px rgba(73,111,151,.07);
+    }
+
+    .form-section:first-child,
+    .activity-section {
+      grid-column: 1 / -1;
+    }
+
+    .identity-section,
+    .activity-section {
+      border-color: var(--line);
+      background: rgba(255,255,255,.66);
+    }
+
+    .section-title {
+      margin-bottom: 15px;
+      color: var(--ink);
+      font-size: 17px;
+      letter-spacing: .02em;
+    }
+
+    .field label { color: #64748a; font-size: 13px; }
+
+    .field input,
+    .field select {
+      height: 54px;
+      border: 1px solid rgba(128,158,190,.28);
+      border-radius: 15px;
+      color: var(--ink);
+      background: rgba(250,253,255,.9);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: #83acd6;
+      box-shadow: 0 0 0 4px rgba(102,152,206,.13);
+    }
+
+    .identity-options { gap: 10px; }
+
+    .identity-option {
+      min-width: 0;
+      flex: 1;
+      border: 1px solid rgba(128,158,190,.24);
+      border-radius: 15px;
+      background: rgba(250,253,255,.9);
+    }
+
+    .identity-option:hover { border-color: #91b5da; transform: none; }
+    .identity-option:has(input:checked) { border-color: #7fa9d4; background: #eaf4fd; }
+    .identity-option input { accent-color: var(--blue); }
+    .identity-name { color: var(--ink); font-size: 15px; }
+
+    .tier-option {
+      border-color: rgba(128,158,190,.24);
+      border-radius: 15px;
+      color: #64748a;
+      background: rgba(250,253,255,.9);
+      font-size: 14px;
+    }
+
+    .tier-option:has(input:checked) {
+      border-color: #7fa9d4;
+      color: var(--blue-deep);
+      background: #eaf4fd;
+    }
+
+    .tier-option input { accent-color: var(--blue); }
+
+    .activity-summary {
+      border: 1px solid rgba(120,157,196,.16);
+      color: var(--blue-deep);
+      background: #eef6fd;
+    }
+
+    .activity-tip,
+    .tip { color: var(--muted); }
+
+    .tip {
+      margin-top: 15px;
+      padding: 12px 14px;
+      background: rgba(234,243,251,.7);
+    }
+
+    .primary-action {
+      grid-column: 1 / -1;
+      margin: 4px 0 0;
+    }
+
+    .primary-button {
+      height: 62px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #79a9d9, #568bc4);
+      box-shadow: 0 14px 30px rgba(75,128,183,.25), inset 0 1px 0 rgba(255,255,255,.35);
+      font-size: 17px;
+    }
+
+    .reset-area {
+      grid-column: 1 / -1;
+      margin-top: 0;
+      padding-top: 2px;
+      border: 0;
+    }
+
+    .reset-button {
+      border-color: rgba(128,158,190,.25);
+      border-radius: 12px;
+      color: var(--muted);
+      background: rgba(255,255,255,.52);
+    }
+
+    .result { border-top-color: rgba(110,145,180,.18); }
+    .result-title { color: var(--ink); }
+    .result-range { color: var(--muted); }
+
+    .plan-card {
+      min-height: 0;
+      border: 1px solid rgba(119,157,196,.22);
+      border-radius: 24px;
+      background: rgba(255,255,255,.75);
+      box-shadow: 0 14px 38px rgba(68,104,143,.09);
+    }
+
+    .plan-card.paint-plan { border-color: rgba(224,155,123,.25); }
+
+    .plan-header,
+    .paint-plan .plan-header {
+      min-height: 105px;
+      padding: 22px;
+      background: linear-gradient(145deg, rgba(224,239,252,.92), rgba(248,252,255,.7));
+    }
+
+    .paint-plan .plan-header {
+      background: linear-gradient(145deg, rgba(255,237,227,.9), rgba(255,250,247,.72));
+    }
+
+    .plan-name { color: var(--blue-deep); }
+    .paint-plan .plan-name { color: #c97755; }
+    .plan-description { color: var(--muted); }
+    .resource-box { min-height: 132px; border: 1px solid rgba(255,255,255,.8); }
+    .resource-box.diamond { color: var(--blue-deep); background: #edf6fe; }
+    .resource-box.paint { color: #cc7b59; background: var(--warm-soft); }
+    .resource-number { font-weight: 500; letter-spacing: -.03em; }
+    .plan-note { color: var(--muted); background: #f0f5fa; }
+    .paint-plan .plan-note { color: #a66b51; background: #fff3ed; }
+
+    .warning-card,
+    .future-card,
+    .rerun-card,
+    details.fold-section {
+      border-width: 1px;
+      border-radius: 22px;
+      box-shadow: 0 12px 34px rgba(68,104,143,.07);
+    }
+
+    .warning-card.good { border-color: #bddfce; background: rgba(241,251,246,.84); }
+    .warning-card.caution { border-color: #eadca2; background: rgba(255,251,232,.86); }
+    .warning-card.danger { border-color: #ecc5ad; background: rgba(255,245,238,.88); }
+    .warning-card.critical { border-color: #ecc4c4; background: rgba(255,243,243,.88); }
+    .warning-text, .future-card p, .rerun-card p { color: #66758a; }
+    .assessment-item { border-color: rgba(128,158,190,.18); border-radius: 17px; background: rgba(255,255,255,.65); }
+    .assessment-number { color: var(--ink); font-weight: 600; }
+    .assessment-label { color: var(--muted); }
+    .future-card { border-color: rgba(110,149,191,.22); background: rgba(239,247,254,.82); }
+    .future-card h4 { color: var(--blue-deep); }
+    .rerun-card { border-color: rgba(224,155,123,.28); background: rgba(255,243,237,.84); }
+    .rerun-card h4 { color: #b56b4d; }
+
+    details.fold-section {
+      overflow: hidden;
+      border-color: rgba(128,158,190,.19);
+      background: rgba(255,255,255,.64);
+    }
+
+    details.fold-section summary { color: #52647b; }
+    .detail-card { border-color: rgba(128,158,190,.18); border-radius: 16px; background: rgba(247,251,254,.78); }
+    .detail-number { color: var(--ink); font-weight: 600; }
+
+    @media (max-width: 760px) {
+      body { padding: 30px 14px 48px; }
+      .header { padding: 0 6px; }
+      .header::before { width: 40px; height: 40px; margin-bottom: 13px; }
+      .header h1 { font-size: 28px; }
+      .panel { padding: 15px; border-radius: 27px; }
+      #calculatorForm { grid-template-columns: 1fr; gap: 13px; }
+      .form-section,
+      .form-section:first-child,
+      .activity-section { grid-column: 1; padding: 18px; border-radius: 20px; }
+      .identity-options { display: grid; grid-template-columns: 1fr 1fr; }
+      .activity-grid .field:last-child { grid-column: 1; }
+      .plan-grid { gap: 14px; }
+      .plan-card { border-radius: 21px; }
+      .assessment-grid { gap: 9px; }
+      .assessment-item { min-height: 108px; padding: 15px 9px; }
+    }
+
+    @media (max-width: 480px) {
+      .tier-options { flex-direction: column; height: auto; }
+      .tier-option { width: 100%; flex: none; }
+      .plan-resources { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 14px; gap: 9px; }
+      .resource-box { min-height: 116px; padding: 16px 8px; }
+      .resource-number { font-size: 28px; }
+      .assessment-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    /* 2026 visual refresh · mist blue app style */
+    :root {
+      --mist-0: #f8fbfe;
+      --mist-1: #edf5fc;
+      --mist-2: #d8e9f8;
+      --mist-3: #b9d5ef;
+      --mist-4: #82acd6;
+      --mist-5: #5688bd;
+      --navy: #34465e;
+      --slate: #7d8b9e;
+      --hairline: rgba(111, 148, 185, .17);
+      --glass-white: rgba(255, 255, 255, .76);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      padding: 46px 22px 80px;
+      color: var(--navy);
+      background:
+        radial-gradient(circle at 7% 13%, rgba(255,255,255,.5) 0 20px, transparent 21px),
+        radial-gradient(circle at 93% 8%, rgba(255,255,255,.28) 0 54px, transparent 55px),
+        radial-gradient(circle at 10% 68%, rgba(255,255,255,.3) 0 36px, transparent 37px),
+        radial-gradient(circle at 91% 77%, rgba(255,255,255,.34) 0 72px, transparent 73px),
+        linear-gradient(180deg, #b7d4ee 0%, #d7e8f7 39%, #edf5fb 100%);
+    }
+
+    .page { max-width: 1060px; }
+
+    .header {
+      position: relative;
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      column-gap: 17px;
+      align-items: center;
+      margin: 0 0 24px;
+      padding: 4px 8px;
+    }
+
+    .header::before {
+      grid-row: 1 / 3;
+      width: 58px;
+      height: 58px;
+      margin: 0;
+      border: 1px solid rgba(255,255,255,.78);
+      border-radius: 20px;
+      content: "✦";
+      color: var(--mist-5);
+      background: rgba(255,255,255,.55);
+      box-shadow: 0 12px 30px rgba(65,105,145,.12), inset 0 1px 0 rgba(255,255,255,.8);
+      font-family: Georgia, serif;
+    }
+
+    .header h1 {
+      align-self: end;
+      margin: 0 0 3px;
+      font-size: clamp(27px, 4vw, 36px);
+      font-weight: 650;
+      letter-spacing: .035em;
+    }
+
+    .header p {
+      align-self: start;
+      margin: 0;
+      font-size: 13px;
+      letter-spacing: .03em;
+    }
+
+    .panel {
+      padding: 22px;
+      border: 1px solid rgba(255,255,255,.82);
+      border-radius: 34px;
+      background: rgba(247,251,255,.69);
+      box-shadow: 0 30px 80px rgba(53,84,119,.16), inset 0 1px 0 rgba(255,255,255,.85);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+    }
+
+    #calculatorForm { gap: 15px; }
+
+    .form-section {
+      position: relative;
+      padding: 22px;
+      border-color: rgba(112,150,189,.15);
+      border-radius: 24px;
+      background: rgba(255,255,255,.7);
+      box-shadow: 0 8px 28px rgba(67,103,142,.055), inset 0 1px 0 rgba(255,255,255,.9);
+    }
+
+    .section-title {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      margin: 0 0 16px;
+      font-size: 17px;
+      font-weight: 650;
+      letter-spacing: .035em;
+    }
+
+    .section-title::before {
+      width: 7px;
+      height: 7px;
+      border: 4px solid #dceaf7;
+      border-radius: 50%;
+      content: "";
+      background: var(--mist-5);
+      box-shadow: 0 0 0 1px rgba(86,136,189,.12);
+    }
+
+    .field label {
+      margin-bottom: 8px;
+      color: #718198;
+      font-size: 12px;
+      font-weight: 650;
+      letter-spacing: .03em;
+    }
+
+    .field input,
+    .field select {
+      height: 55px;
+      padding: 0 16px;
+      border-color: rgba(110,149,189,.19);
+      border-radius: 17px;
+      color: var(--navy);
+      background: rgba(249,252,255,.92);
+      box-shadow: inset 0 1px 2px rgba(58,85,116,.025);
+      font-size: 16px;
+      font-weight: 550;
+    }
+
+    .identity-options { gap: 10px; }
+
+    .identity-option,
+    .tier-option {
+      min-height: 55px;
+      border-color: rgba(110,149,189,.18);
+      border-radius: 17px;
+      background: rgba(249,252,255,.92);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+    }
+
+    .identity-option input,
+    .tier-option input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--mist-5);
+    }
+
+    .identity-option:has(input:checked),
+    .tier-option:has(input:checked) {
+      border-color: rgba(82,136,191,.48);
+      color: var(--mist-5);
+      background: #e8f2fb;
+      box-shadow: 0 7px 18px rgba(78,126,175,.09), inset 0 1px 0 rgba(255,255,255,.8);
+    }
+
+    .activity-summary {
+      position: relative;
+      margin-top: 15px;
+      padding: 17px 18px 17px 51px;
+      border: 1px solid rgba(93,143,193,.17);
+      border-radius: 18px;
+      color: #4f7eaf;
+      background: linear-gradient(135deg, rgba(227,241,253,.95), rgba(244,249,253,.9));
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .activity-summary::before {
+      position: absolute;
+      top: 50%;
+      left: 18px;
+      content: "♡";
+      transform: translateY(-52%);
+      color: #6f9fd0;
+      font-family: Georgia, serif;
+      font-size: 24px;
+      font-weight: 400;
+    }
+
+    .activity-tip,
+    .tip {
+      margin-bottom: 0;
+      color: #8a97a9;
+      font-size: 12px;
+      line-height: 1.75;
+    }
+
+    .tip { border-radius: 15px; background: rgba(232,242,251,.62); }
+
+    .primary-button {
+      height: 64px;
+      border: 1px solid rgba(255,255,255,.42);
+      border-radius: 20px;
+      background: linear-gradient(135deg, #82add8 0%, #5f91c5 100%);
+      box-shadow: 0 15px 32px rgba(69,119,170,.25), inset 0 1px 0 rgba(255,255,255,.42);
+      font-size: 17px;
+      font-weight: 650;
+      letter-spacing: .08em;
+    }
+
+    .primary-button:hover { opacity: 1; filter: brightness(1.035); transform: translateY(-1px); }
+    .primary-button:active { transform: translateY(0) scale(.992); }
+
+    .reset-button { border: 0; background: transparent; }
+
+    .result {
+      margin-top: 28px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(102,141,180,.18);
+    }
+
+    .result-title,
+    .assessment-title { color: var(--navy); font-weight: 650; letter-spacing: .025em; }
+
+    .plan-grid { gap: 15px; }
+
+    .plan-card {
+      border-radius: 25px;
+      background: rgba(255,255,255,.72);
+      box-shadow: 0 13px 35px rgba(60,94,131,.07);
+    }
+
+    .plan-header,
+    .paint-plan .plan-header {
+      min-height: 112px;
+      padding: 23px;
+      background: linear-gradient(145deg, #e1effb, rgba(248,252,255,.86));
+    }
+
+    .paint-plan .plan-header { background: linear-gradient(145deg, #edf5fc, rgba(251,253,255,.9)); }
+    .paint-plan .plan-name { color: var(--mist-5); }
+    .resource-box.paint { color: #638fbe; background: #edf5fc; }
+    .paint-plan .plan-note { color: #77879b; background: #f0f6fb; }
+
+    .warning-card,
+    .future-card,
+    .rerun-card,
+    details.fold-section { border-radius: 23px; }
+
+    details.fold-section summary::after {
+      width: 54px;
+      padding: 5px 0;
+      border-radius: 999px;
+      text-align: center;
+      background: #edf4fa;
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 24px 12px 50px; }
+      .header { grid-template-columns: 48px 1fr; column-gap: 13px; padding: 0 7px; }
+      .header::before { width: 48px; height: 48px; border-radius: 17px; }
+      .header h1 { font-size: 26px; }
+      .header p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .panel { padding: 11px; border-radius: 29px; }
+      #calculatorForm { gap: 10px; }
+      .form-section,
+      .form-section:first-child,
+      .activity-section { padding: 18px; border-radius: 22px; }
+      .input-grid,
+      .date-grid,
+      .activity-grid { gap: 13px; }
+      .field input,
+      .field select { height: 52px; }
+      .identity-option,
+      .tier-option { min-height: 52px; }
+      .primary-button { height: 59px; border-radius: 18px; }
+      .result { margin: 22px 6px 4px; padding-top: 24px; }
+      .result-title { font-size: 23px; }
+    }
+
+    @media (max-width: 480px) {
+      .tier-options { flex-direction: row; }
+      .tier-option { width: auto; flex: 1; padding: 0 10px; font-size: 13px; }
+      .identity-option { justify-content: center; padding: 12px; }
+      .activity-summary { padding-left: 47px; }
+      .plan-header { padding: 20px; }
+      .plan-name { font-size: 20px; }
+      .plan-description { font-size: 13px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="header">
+      <h1>活动资源计算器</h1>
+
+      <p>记录当下，规划每一次相遇</p>
+    </header>
+
+    <section class="panel">
+      <form id="calculatorForm">
+        <section class="form-section">
+          <h2 class="section-title">填写当前资源</h2>
+
+          <div class="input-grid">
+            <div class="field">
+              <label for="currentDiamond">
+                当前蓝钻数量
+              </label>
+
+              <input
+                id="currentDiamond"
+                type="number"
+                min="0"
+                step="1"
+                value="0"
+                inputmode="numeric"
+                required
+              >
+            </div>
+
+            <div class="field">
+              <label for="currentPaint">
+                当前普通颜料数量
+              </label>
+
+              <input
+                id="currentPaint"
+                type="number"
+                min="0"
+                step="1"
+                value="0"
+                inputmode="numeric"
+                required
+              >
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section identity-section">
+          <h2 class="section-title">会员权益</h2>
+
+          <div class="identity-options">
+            <label class="identity-option">
+              <input
+                id="hasMonthlyCard"
+                type="checkbox"
+              >
+
+              <span class="identity-name">月卡</span>
+            </label>
+
+            <label class="identity-option">
+              <input
+                id="hasSeasonCard"
+                type="checkbox"
+              >
+
+              <span class="identity-name">季卡</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="form-section activity-section">
+          <h2 class="section-title">活动计划</h2>
+
+          <div class="activity-grid">
+            <div class="field">
+              <label for="rerunCount">复刻活动数量</label>
+              <input id="rerunCount" type="number" min="0" step="1" value="0" inputmode="numeric">
+            </div>
+
+            <div class="field">
+              <label for="currentEventCount">当期活动数量</label>
+              <input id="currentEventCount" type="number" min="0" step="1" value="1" inputmode="numeric">
+            </div>
+
+            <div class="field">
+              <label>当期活动保底</label>
+              <div class="tier-options">
+                <label class="tier-option">
+                  <input type="radio" name="currentTier" value="70">
+                  小保底（70）
+                </label>
+                <label class="tier-option">
+                  <input type="radio" name="currentTier" value="120" checked>
+                  大保底（120）
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <p id="activityPlanSummary" class="activity-summary"></p>
+
+          <p class="activity-tip">评估以“攒颜料优先”为准；直接颜料不足时，才计算150蓝钻兑换1颜料的补足方案。</p>
+        </section>
+
+        <section class="form-section">
+          <h2 class="section-title">选择计算日期</h2>
+
+          <div class="date-grid">
+            <div class="field">
+              <label for="startDate">
+                开始日期
+              </label>
+
+              <input
+                id="startDate"
+                type="date"
+                required
+              >
+            </div>
+
+            <div class="field">
+              <label for="endDate">
+                截止日期
+              </label>
+
+              <input
+                id="endDate"
+                type="date"
+                required
+              >
+            </div>
+          </div>
+
+          <p class="tip">开始日期当天不计算，截止日期当天计算。本次填写的会员状态在预测期间保持不变。</p>
+        </section>
+
+        <div class="primary-action">
+          <button
+            class="primary-button"
+            type="submit"
+          >
+            开始计算与评估
+          </button>
+        </div>
+
+        <div class="reset-area">
+          <button
+            id="resetButton"
+            class="reset-button"
+            type="button"
+          >
+            清空全部填写内容
+          </button>
+        </div>
+      </form>
+
+      <div
+        id="message"
+        class="message"
+      ></div>
+
+      <section
+        id="result"
+        class="result"
+      >
+        <h2 class="result-title">
+          截止日期资源结果
+        </h2>
+
+        <p
+          id="resultRange"
+          class="result-range"
+        ></p>
+
+        <div class="plan-grid">
+          <section class="plan-card">
+            <div class="plan-header">
+              <h3 class="plan-name">
+                攒钻优先
+              </h3>
+
+              <p class="plan-description">
+                不进行任何蓝钻兑换，
+                完整保留计算期间获得的蓝钻。
+              </p>
+            </div>
+
+            <div class="plan-resources">
+              <div class="resource-box diamond">
+                <span
+                  id="diamondPlanDiamond"
+                  class="resource-number"
+                >
+                  0个
+                </span>
+
+                <span class="resource-label">
+                  最终蓝钻
+                </span>
+              </div>
+
+              <div class="resource-box paint">
+                <span
+                  id="diamondPlanPaint"
+                  class="resource-number"
+                >
+                  0个
+                </span>
+
+                <span class="resource-label">
+                  最终普通颜料
+                </span>
+              </div>
+            </div>
+
+            <div class="plan-note">
+              本方案不使用月卡每周兑换，也不计算150蓝钻基础兑换。
+            </div>
+          </section>
+
+          <section class="plan-card paint-plan">
+            <div class="plan-header">
+              <h3 class="plan-name">
+                攒颜料优先
+              </h3>
+
+              <p class="plan-description">
+                月卡用户在每周蓝钻足够时，
+                优先使用1200个蓝钻兑换10个普通颜料。
+              </p>
+            </div>
+
+            <div class="plan-resources">
+              <div class="resource-box diamond">
+                <span
+                  id="paintPlanDiamond"
+                  class="resource-number"
+                >
+                  0个
+                </span>
+
+                <span class="resource-label">
+                  最终剩余蓝钻
+                </span>
+              </div>
+
+              <div class="resource-box paint">
+                <span
+                  id="paintPlanPaint"
+                  class="resource-number"
+                >
+                  0个
+                </span>
+
+                <span class="resource-label">
+                  最终普通颜料
+                </span>
+              </div>
+            </div>
+
+            <div
+              id="paintPlanNote"
+              class="plan-note"
+            ></div>
+          </section>
+        </div>
+
+        <section class="assessment-section">
+          <h3 class="assessment-title">
+            活动目标评估与预警
+          </h3>
+
+          <div
+            id="warningCard"
+            class="warning-card good"
+          >
+            <span
+              id="warningLevel"
+              class="warning-level"
+            >
+              资源充足
+            </span>
+
+            <h4
+              id="warningHeading"
+              class="warning-heading"
+            >
+              可以达到活动目标
+            </h4>
+
+            <p
+              id="warningText"
+              class="warning-text"
+            ></p>
+
+            <div class="assessment-grid">
+              <div class="assessment-item">
+                <span
+                  id="targetPaint"
+                  class="assessment-number"
+                >
+                  0个
+                </span>
+
+                <span class="assessment-label">
+                  活动目标
+                </span>
+              </div>
+
+              <div class="assessment-item">
+                <span
+                  id="deadlinePaint"
+                  class="assessment-number"
+                >
+                  0个
+                </span>
+
+                <span class="assessment-label">
+                  截止日期直接拥有的普通颜料
+                </span>
+              </div>
+
+              <div class="assessment-item">
+                <span
+                  id="convertiblePaint"
+                  class="assessment-number"
+                >
+                  0个
+                </span>
+
+                <span class="assessment-label">
+                  剩余蓝钻最多可兑换的普通颜料
+                </span>
+              </div>
+
+              <div class="assessment-item">
+                <span
+                  id="maximumPaint"
+                  class="assessment-number"
+                >
+                  0个
+                </span>
+
+                <span class="assessment-label">
+                  全部兑换后的普通颜料上限
+                </span>
+              </div>
+
+              <div class="assessment-item">
+                <span
+                  id="requiredConvertDiamond"
+                  class="assessment-number"
+                >
+                  0个
+                </span>
+
+                <span class="assessment-label">
+                  达标所需兑换蓝钻
+                </span>
+              </div>
+
+              <div class="assessment-item">
+                <span
+                  id="remainingDiamondAfterTarget"
+                  class="assessment-number"
+                >
+                  0个
+                </span>
+
+                <span class="assessment-label">
+                  达标后预计剩余蓝钻
+                </span>
+              </div>
+
+              <div class="assessment-item">
+                <span
+                  id="paintGap"
+                  class="assessment-number"
+                >
+                  0个
+                </span>
+
+                <span class="assessment-label">
+                  截止日期距离目标
+                </span>
+              </div>
+
+              <div class="assessment-item">
+                <span
+                  id="forecastEndDate"
+                  class="assessment-number"
+                >
+                  —
+                </span>
+
+                <span class="assessment-label">
+                  最远预测日期
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="future-card">
+            <h4>未来3个月预测</h4>
+
+            <p id="futureForecastText"></p>
+          </div>
+
+          <div
+            id="rerunCard"
+            class="rerun-card"
+          >
+            <h4>完成活动计划后的资源恢复</h4>
+
+            <p id="rerunForecastText"></p>
+          </div>
+        </section>
+
+        <details class="fold-section">
+          <summary>
+            查看资源计算明细
+          </summary>
+
+          <div class="fold-content">
+            <div class="detail-grid">
+              <div class="detail-card">
+                <span
+                  id="earnedDiamond"
+                  class="detail-number"
+                >
+                  0个
+                </span>
+
+                <span class="detail-label">
+                  新获得蓝钻合计
+                </span>
+
+                <span class="detail-note">
+                  不包含当前已有蓝钻
+                </span>
+              </div>
+
+              <div class="detail-card">
+                <span
+                  id="signInDiamond"
+                  class="detail-number"
+                >
+                  0个
+                </span>
+
+                <span class="detail-label">
+                  签到蓝钻
+                </span>
+
+                <span
+                  id="signInNote"
+                  class="detail-note"
+                >
+                  按基础签到计算
+                </span>
+              </div>
+
+              <div class="detail-card">
+                <span
+                  id="dailyTaskDiamond"
+                  class="detail-number"
+                >
+                  0个
+                </span>
+
+                <span class="detail-label">
+                  每日任务蓝钻
+                </span>
+              </div>
+
+              <div class="detail-card">
+                <span
+                  id="shareDiamond"
+                  class="detail-number"
+                >
+                  0个
+                </span>
+
+                <span class="detail-label">
+                  转发蓝钻
+                </span>
+              </div>
+
+              <div class="detail-card">
+                <span
+                  id="monthlyCardDiamond"
+                  class="detail-number"
+                >
+                  0个
+                </span>
+
+                <span class="detail-label">
+                  月卡每日蓝钻
+                </span>
+              </div>
+
+              <div class="detail-card">
+                <span
+                  id="seasonCardDiamond"
+                  class="detail-number"
+                >
+                  0个
+                </span>
+
+                <span class="detail-label">
+                  季卡每日蓝钻
+                </span>
+              </div>
+
+              <div class="detail-card">
+                <span
+                  id="directPaint"
+                  class="detail-number"
+                >
+                  0个
+                </span>
+
+                <span class="detail-label">计算期间月末领取颜料</span>
+              </div>
+
+              <div class="detail-card">
+                <span
+                  id="calculationDays"
+                  class="detail-number"
+                >
+                  0天
+                </span>
+
+                <span class="detail-label">
+                  实际计算天数
+                </span>
+              </div>
+
+              <div class="detail-card">
+                <span
+                  id="naturalWeekCount"
+                  class="detail-number"
+                >
+                  0周
+                </span>
+
+                <span class="detail-label">
+                  涉及的自然周
+                </span>
+              </div>
+
+              <div class="detail-card">
+                <span
+                  id="exchangeCount"
+                  class="detail-number"
+                >
+                  0次
+                </span>
+
+                <span class="detail-label">
+                  月卡兑换成功次数
+                </span>
+              </div>
+
+              <div class="detail-card">
+                <span
+                  id="exchangeDiamondCost"
+                  class="detail-number"
+                >
+                  0个
+                </span>
+
+                <span class="detail-label">
+                  月卡兑换消耗蓝钻
+                </span>
+              </div>
+
+              <div class="detail-card">
+                <span
+                  id="exchangePaintGain"
+                  class="detail-number"
+                >
+                  0个
+                </span>
+
+                <span class="detail-label">
+                  月卡兑换获得普通颜料
+                </span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="fold-section">
+          <summary>
+            查看当前计算规则
+          </summary>
+
+          <div class="fold-content">
+            <ul class="rules-list">
+              <li>
+                开始日期当天不计算，截止日期当天计算。
+              </li>
+
+              <li>
+                签到日为每月3、6、9、12、15、19、23、27号。
+              </li>
+
+              <li>
+                签到蓝钻依次为30、35、40、45、50、55、60、65个，
+                每月重新开始。
+              </li>
+
+              <li>
+                每日任务每天获得76个蓝钻。
+              </li>
+
+              <li>
+                每个自然周转发一次，立即获得30个蓝钻。
+              </li>
+
+              <li>
+                每个月最后一天获得1个普通颜料。
+              </li>
+
+              <li>
+                月卡使签到蓝钻变为2倍，并且每天额外获得50个蓝钻。
+              </li>
+
+              <li>
+                季卡每天额外获得50个蓝钻。
+              </li>
+
+              <li>
+                月卡和季卡每日奖励可以同时获得。
+              </li>
+
+              <li>
+                攒颜料优先时，月卡用户每个自然周最多使用一次
+                1200个蓝钻兑换10个普通颜料。
+              </li>
+
+              <li>
+                月卡每周兑换按每天实际蓝钻余额判断，
+                未使用的周兑换机会不会补到下一周。
+              </li>
+
+              <li>
+                150个蓝钻兑换1个普通颜料只用于活动资源评估，
+                不会直接改变上方显示的原始资源结果。
+              </li>
+
+              <li>
+                未来预测从截止日期之后开始，最长继续预测3个月。
+              </li>
+
+              <li>未来预测期间保持本次填写的月卡和季卡状态不变。</li>
+
+              <li>可同时填写多个复刻和当期活动；系统汇总全部计划所需颜料，不对活动排序或取舍。</li>
+              <li>当期小保底需要70个普通颜料，大保底需要120个普通颜料，复刻保底需要160个普通颜料。</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const DAY_IN_MILLISECONDS =
+      24 * 60 * 60 * 1000;
+
+    const DAILY_TASK_DIAMOND = 76;
+    const CARD_DAILY_DIAMOND = 50;
+    const WEEKLY_SHARE_DIAMOND = 30;
+
+    const MONTHLY_EXCHANGE_COST = 1200;
+    const MONTHLY_EXCHANGE_PAINT = 10;
+
+    const BASIC_EXCHANGE_COST = 150;
+    const RERUN_TARGET = 160;
+    const SMALL_TARGET = 70;
+
+    const signInRules = {
+      3: 30,
+      6: 35,
+      9: 40,
+      12: 45,
+      15: 50,
+      19: 55,
+      23: 60,
+      27: 65
+    };
+
+    const calculatorForm =
+      document.getElementById("calculatorForm");
+
+    const currentDiamondInput =
+      document.getElementById("currentDiamond");
+
+    const currentPaintInput =
+      document.getElementById("currentPaint");
+
+    const hasMonthlyCardInput =
+      document.getElementById("hasMonthlyCard");
+
+    const hasSeasonCardInput =
+      document.getElementById("hasSeasonCard");
+
+    const rerunCountInput =
+      document.getElementById("rerunCount");
+
+    const currentEventCountInput =
+      document.getElementById("currentEventCount");
+
+    const startDateInput =
+      document.getElementById("startDate");
+
+    const endDateInput =
+      document.getElementById("endDate");
+
+    const resetButton =
+      document.getElementById("resetButton");
+
+    const message =
+      document.getElementById("message");
+
+    const result =
+      document.getElementById("result");
+
+    function getElement(id) {
+      return document.getElementById(id);
+    }
+
+    function formatInputDate(date) {
+      const year = date.getFullYear();
+
+      const month =
+        String(date.getMonth() + 1).padStart(2, "0");
+
+      const day =
+        String(date.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    }
+
+    function parseInputDate(value) {
+      const parts = value.split("-").map(Number);
+
+      return new Date(
+        Date.UTC(
+          parts[0],
+          parts[1] - 1,
+          parts[2]
+        )
+      );
+    }
+
+    function addUtcDays(date, days) {
+      return new Date(
+        date.getTime() +
+        days * DAY_IN_MILLISECONDS
+      );
+    }
+
+    function addUtcMonthsClamped(date, months) {
+      const year = date.getUTCFullYear();
+      const month = date.getUTCMonth();
+      const day = date.getUTCDate();
+
+      const targetFirstDay = new Date(
+        Date.UTC(year, month + months, 1)
+      );
+
+      const targetLastDay = new Date(
+        Date.UTC(
+          targetFirstDay.getUTCFullYear(),
+          targetFirstDay.getUTCMonth() + 1,
+          0
+        )
+      ).getUTCDate();
+
+      return new Date(
+        Date.UTC(
+          targetFirstDay.getUTCFullYear(),
+          targetFirstDay.getUTCMonth(),
+          Math.min(day, targetLastDay)
+        )
+      );
+    }
+
+    function formatChineseDate(date) {
+      return (
+        `${date.getUTCFullYear()}年` +
+        `${date.getUTCMonth() + 1}月` +
+        `${date.getUTCDate()}日`
+      );
+    }
+
+    function formatShortDate(date) {
+      return (
+        `${date.getUTCMonth() + 1}月` +
+        `${date.getUTCDate()}日`
+      );
+    }
+
+    function formatNumber(number) {
+      return number.toLocaleString("zh-CN");
+    }
+
+    function showMessage(text) {
+      message.textContent = text;
+      message.style.display = "block";
+      result.style.display = "none";
+    }
+
+    function hideMessage() {
+      message.textContent = "";
+      message.style.display = "none";
+    }
+
+    function getNonNegativeInteger(input) {
+      const value = Number(input.value);
+
+      if (
+        !Number.isFinite(value) ||
+        value < 0 ||
+        !Number.isInteger(value)
+      ) {
+        return null;
+      }
+
+      return value;
+    }
+
+    function getWeekKey(date) {
+      const dayOfWeek = date.getUTCDay();
+
+      const daysFromMonday =
+        dayOfWeek === 0
+          ? 6
+          : dayOfWeek - 1;
+
+      const monday =
+        addUtcDays(date, -daysFromMonday);
+
+      return (
+        `${monday.getUTCFullYear()}-` +
+        `${String(
+          monday.getUTCMonth() + 1
+        ).padStart(2, "0")}-` +
+        `${String(
+          monday.getUTCDate()
+        ).padStart(2, "0")}`
+      );
+    }
+
+    function isLastDayOfMonth(date) {
+      const nextDay = addUtcDays(date, 1);
+
+      return (
+        nextDay.getUTCMonth() !==
+        date.getUTCMonth()
+      );
+    }
+
+    function getSignInDiamond(
+      date,
+      hasMonthlyCard
+    ) {
+      const baseAmount =
+        signInRules[date.getUTCDate()] || 0;
+
+      return hasMonthlyCard
+        ? baseAmount * 2
+        : baseAmount;
+    }
+
+    function createState(
+      currentDiamond,
+      currentPaint
+    ) {
+      return {
+        diamond: currentDiamond,
+        paint: currentPaint,
+        sharedWeeks: new Set(),
+        exchangedWeeks: new Set(),
+        totals: {
+          days: 0,
+          signInDiamond: 0,
+          dailyTaskDiamond: 0,
+          shareDiamond: 0,
+          monthlyCardDiamond: 0,
+          seasonCardDiamond: 0,
+          directPaint: 0,
+          exchangeCount: 0
+        }
+      };
+    }
+
+    function cloneState(state) {
+      return {
+        diamond: state.diamond,
+        paint: state.paint,
+        sharedWeeks: new Set(state.sharedWeeks),
+        exchangedWeeks:
+          new Set(state.exchangedWeeks),
+        totals: {
+          ...state.totals
+        }
+      };
+    }
+
+    function processOneDay(
+      state,
+      date,
+      options
+    ) {
+      const {
+        hasMonthlyCard,
+        hasSeasonCard,
+        allowMonthlyExchange
+      } = options;
+
+      const weekKey = getWeekKey(date);
+
+      state.totals.days += 1;
+
+      state.diamond +=
+        DAILY_TASK_DIAMOND;
+
+      state.totals.dailyTaskDiamond +=
+        DAILY_TASK_DIAMOND;
+
+      if (hasMonthlyCard) {
+        state.diamond +=
+          CARD_DAILY_DIAMOND;
+
+        state.totals.monthlyCardDiamond +=
+          CARD_DAILY_DIAMOND;
+      }
+
+      if (hasSeasonCard) {
+        state.diamond +=
+          CARD_DAILY_DIAMOND;
+
+        state.totals.seasonCardDiamond +=
+          CARD_DAILY_DIAMOND;
+      }
+
+      const signInDiamond =
+        getSignInDiamond(
+          date,
+          hasMonthlyCard
+        );
+
+      state.diamond += signInDiamond;
+
+      state.totals.signInDiamond +=
+        signInDiamond;
+
+      if (!state.sharedWeeks.has(weekKey)) {
+        state.sharedWeeks.add(weekKey);
+
+        state.diamond +=
+          WEEKLY_SHARE_DIAMOND;
+
+        state.totals.shareDiamond +=
+          WEEKLY_SHARE_DIAMOND;
+      }
+
+      if (isLastDayOfMonth(date)) {
+        state.paint += 1;
+        state.totals.directPaint += 1;
+      }
+
+      if (
+        allowMonthlyExchange &&
+        hasMonthlyCard &&
+        !state.exchangedWeeks.has(weekKey) &&
+        state.diamond >=
+          MONTHLY_EXCHANGE_COST
+      ) {
+        state.diamond -=
+          MONTHLY_EXCHANGE_COST;
+
+        state.paint +=
+          MONTHLY_EXCHANGE_PAINT;
+
+        state.exchangedWeeks.add(weekKey);
+
+        state.totals.exchangeCount += 1;
+      }
+    }
+
+    function runDateRange(
+      state,
+      firstDate,
+      lastDate,
+      options
+    ) {
+      let currentDate =
+        new Date(firstDate.getTime());
+
+      while (currentDate <= lastDate) {
+        processOneDay(
+          state,
+          currentDate,
+          options
+        );
+
+        currentDate =
+          addUtcDays(currentDate, 1);
+      }
+
+      return state;
+    }
+
+    function getPotentialPaint(state) {
+      return (
+        state.paint +
+        Math.floor(
+          state.diamond /
+          BASIC_EXCHANGE_COST
+        )
+      );
+    }
+
+    function findFutureTargetDate(
+      deadlineState,
+      endDate,
+      forecastEnd,
+      target,
+      options
+    ) {
+      const state = cloneState(deadlineState);
+
+      if (getPotentialPaint(state) >= target) {
+        return {
+          reached: true,
+          date: endDate,
+          daysAfterDeadline: 0,
+          state
+        };
+      }
+
+      let date = addUtcDays(endDate, 1);
+      let daysAfterDeadline = 0;
+
+      while (date <= forecastEnd) {
+        daysAfterDeadline += 1;
+
+        processOneDay(
+          state,
+          date,
+          options
+        );
+
+        if (getPotentialPaint(state) >= target) {
+          return {
+            reached: true,
+            date,
+            daysAfterDeadline,
+            state
+          };
+        }
+
+        date = addUtcDays(date, 1);
+      }
+
+      return {
+        reached: false,
+        date: null,
+        daysAfterDeadline: null,
+        state
+      };
+    }
+
+    function calculatePlanRecovery(
+      deadlineState,
+      endDate,
+      forecastEnd,
+      planTarget,
+      options
+    ) {
+      const state = cloneState(deadlineState);
+
+      const directPaint =
+        state.paint;
+
+      const missingPaint =
+        Math.max(
+          0,
+          planTarget - directPaint
+        );
+
+      const conversionDiamond =
+        missingPaint *
+        BASIC_EXCHANGE_COST;
+
+      if (state.diamond < conversionDiamond) {
+        return {
+          canRush: false
+        };
+      }
+
+      state.diamond -= conversionDiamond;
+      state.paint += missingPaint;
+      state.paint -= planTarget;
+
+      if (getPotentialPaint(state) >= SMALL_TARGET) {
+        return {
+          canRush: true,
+          reached: true,
+          date: endDate,
+          days: 0,
+          state,
+          conversionDiamond
+        };
+      }
+
+      let date = addUtcDays(endDate, 1);
+      let days = 0;
+
+      while (date <= forecastEnd) {
+        days += 1;
+
+        processOneDay(
+          state,
+          date,
+          options
+        );
+
+        if (
+          getPotentialPaint(state) >=
+          SMALL_TARGET
+        ) {
+          return {
+            canRush: true,
+            reached: true,
+            date,
+            days,
+            state,
+            conversionDiamond
+          };
+        }
+
+        date = addUtcDays(date, 1);
+      }
+
+      return {
+        canRush: true,
+        reached: false,
+        date: null,
+        days: null,
+        state,
+        conversionDiamond
+      };
+    }
+
+    function getCurrentTier() {
+      return Number(
+        document.querySelector(
+          'input[name="currentTier"]:checked'
+        ).value
+      );
+    }
+
+    function getPlanData() {
+      const rerunCount = getNonNegativeInteger(rerunCountInput);
+      const currentEventCount = getNonNegativeInteger(currentEventCountInput);
+      const currentTier = getCurrentTier();
+
+      if (rerunCount === null || currentEventCount === null) {
+        return null;
+      }
+
+      return {
+        rerunCount,
+        currentEventCount,
+        currentTier,
+        target: rerunCount * RERUN_TARGET + currentEventCount * currentTier
+      };
+    }
+
+    function getPlanText(plan) {
+      const parts = [];
+
+      if (plan.rerunCount > 0) {
+        parts.push(`${plan.rerunCount}个复刻活动`);
+      }
+
+      if (plan.currentEventCount > 0) {
+        const tierName = plan.currentTier === SMALL_TARGET ? "小保底" : "大保底";
+        parts.push(`${plan.currentEventCount}个当期${tierName}活动`);
+      }
+
+      return parts.join("、");
+    }
+
+    function updateActivitySummary() {
+      const plan = getPlanData();
+      const summary = getElement("activityPlanSummary");
+
+      if (!plan) {
+        summary.textContent = "活动数量需填写0或正整数。";
+        return;
+      }
+
+      if (plan.target === 0) {
+        summary.textContent = "请至少选择一个活动。";
+        return;
+      }
+
+      summary.textContent = `${getPlanText(plan)}，共需要${formatNumber(plan.target)}个普通颜料。`;
+    }
+
+    function setText(id, text) {
+      getElement(id).textContent = text;
+    }
+
+    function updateWarningClass(level) {
+      const warningCard =
+        getElement("warningCard");
+
+      warningCard.className =
+        `warning-card ${level}`;
+    }
+
+    calculatorForm.addEventListener(
+      "submit",
+      function (event) {
+        event.preventDefault();
+        hideMessage();
+
+        const currentDiamond =
+          getNonNegativeInteger(
+            currentDiamondInput
+          );
+
+        const currentPaint =
+          getNonNegativeInteger(
+            currentPaintInput
+          );
+
+        if (currentDiamond === null) {
+          showMessage(
+            "当前蓝钻数量必须填写为0或正整数。"
+          );
+          return;
+        }
+
+        if (currentPaint === null) {
+          showMessage(
+            "当前普通颜料数量必须填写为0或正整数。"
+          );
+          return;
+        }
+
+        if (
+          !startDateInput.value ||
+          !endDateInput.value
+        ) {
+          showMessage(
+            "请选择开始日期和截止日期。"
+          );
+          return;
+        }
+
+        const startDate =
+          parseInputDate(startDateInput.value);
+
+        const endDate =
+          parseInputDate(endDateInput.value);
+
+        if (endDate < startDate) {
+          showMessage(
+            "截止日期不能早于开始日期。"
+          );
+          return;
+        }
+
+        const hasMonthlyCard =
+          hasMonthlyCardInput.checked;
+
+        const hasSeasonCard =
+          hasSeasonCardInput.checked;
+
+        const plan = getPlanData();
+
+        if (!plan) {
+          showMessage("活动数量必须填写为0或正整数。");
+          return;
+        }
+
+        if (plan.target === 0) {
+          showMessage("请至少选择一个活动。");
+          return;
+        }
+
+        const target = plan.target;
+        const activityName = "全部活动计划";
+        const planText = getPlanText(plan);
+
+        const firstCalculationDate =
+          addUtcDays(startDate, 1);
+
+        const diamondState =
+          createState(
+            currentDiamond,
+            currentPaint
+          );
+
+        const paintState =
+          createState(
+            currentDiamond,
+            currentPaint
+          );
+
+        const commonOptions = {
+          hasMonthlyCard,
+          hasSeasonCard
+        };
+
+        if (firstCalculationDate <= endDate) {
+          runDateRange(
+            diamondState,
+            firstCalculationDate,
+            endDate,
+            {
+              ...commonOptions,
+              allowMonthlyExchange: false
+            }
+          );
+
+          runDateRange(
+            paintState,
+            firstCalculationDate,
+            endDate,
+            {
+              ...commonOptions,
+              allowMonthlyExchange: true
+            }
+          );
+        }
+
+        const earnedDiamond =
+          diamondState.diamond -
+          currentDiamond;
+
+        const exchangeCount =
+          paintState.totals.exchangeCount;
+
+        const exchangeDiamondCost =
+          exchangeCount *
+          MONTHLY_EXCHANGE_COST;
+
+        const exchangePaintGain =
+          exchangeCount *
+          MONTHLY_EXCHANGE_PAINT;
+
+        const convertiblePaint =
+          Math.floor(
+            paintState.diamond /
+            BASIC_EXCHANGE_COST
+          );
+
+        const maximumPaint =
+          paintState.paint +
+          convertiblePaint;
+
+        const missingDirectPaint =
+          Math.max(
+            0,
+            target - paintState.paint
+          );
+
+        const requiredConvertDiamond =
+          missingDirectPaint *
+          BASIC_EXCHANGE_COST;
+
+        const canReachWithConversion =
+          requiredConvertDiamond <=
+          paintState.diamond;
+
+        const remainingDiamondAfterTarget =
+          canReachWithConversion
+            ? paintState.diamond -
+              requiredConvertDiamond
+            : paintState.diamond;
+
+        const finalPaintGap =
+          Math.max(
+            0,
+            target - maximumPaint
+          );
+
+        const forecastEnd =
+          addUtcMonthsClamped(
+            endDate,
+            3
+          );
+
+        const futureResult =
+          findFutureTargetDate(
+            paintState,
+            endDate,
+            forecastEnd,
+            target,
+            {
+              ...commonOptions,
+              allowMonthlyExchange: true
+            }
+          );
+
+        setText(
+          "diamondPlanDiamond",
+          `${formatNumber(
+            diamondState.diamond
+          )}个`
+        );
+
+        setText(
+          "diamondPlanPaint",
+          `${formatNumber(
+            diamondState.paint
+          )}个`
+        );
+
+        setText(
+          "paintPlanDiamond",
+          `${formatNumber(
+            paintState.diamond
+          )}个`
+        );
+
+        setText(
+          "paintPlanPaint",
+          `${formatNumber(
+            paintState.paint
+          )}个`
+        );
+
+        if (hasMonthlyCard) {
+          setText(
+            "paintPlanNote",
+            `本次共使用月卡每周兑换` +
+            `${formatNumber(exchangeCount)}次，` +
+            `消耗${formatNumber(
+              exchangeDiamondCost
+            )}个蓝钻，获得` +
+            `${formatNumber(
+              exchangePaintGain
+            )}个普通颜料。`
+          );
+        } else {
+          setText(
+            "paintPlanNote",
+            "当前未购买月卡，不能使用每周兑换，因此两种方案结果相同。"
+          );
+        }
+
+        setText(
+          "targetPaint",
+          `${formatNumber(target)}个`
+        );
+
+        setText(
+          "deadlinePaint",
+          `${formatNumber(
+            paintState.paint
+          )}个`
+        );
+
+        setText(
+          "convertiblePaint",
+          `${formatNumber(
+            convertiblePaint
+          )}个`
+        );
+
+        setText(
+          "maximumPaint",
+          `${formatNumber(
+            maximumPaint
+          )}个`
+        );
+
+        setText(
+          "requiredConvertDiamond",
+          `${formatNumber(requiredConvertDiamond)}个`
+        );
+
+        setText(
+          "remainingDiamondAfterTarget",
+          canReachWithConversion
+            ? `${formatNumber(remainingDiamondAfterTarget)}个`
+            : "—"
+        );
+
+        setText(
+          "paintGap",
+          `${formatNumber(
+            finalPaintGap
+          )}个`
+        );
+
+        setText(
+          "forecastEndDate",
+          formatShortDate(forecastEnd)
+        );
+
+        if (paintState.paint >= target) {
+          updateWarningClass("good");
+
+          setText(
+            "warningLevel",
+            "资源充足"
+          );
+
+          setText(
+            "warningHeading",
+            `截止日期可达到${activityName}`
+          );
+
+          setText(
+            "warningText",
+            `预计截止${formatChineseDate(
+              endDate
+            )}时，可以直接拥有` +
+            `${formatNumber(
+              paintState.paint
+            )}个普通颜料，` +
+            `已经达到${formatNumber(
+              target
+            )}个普通颜料的计划，` +
+            `无需使用150蓝钻基础兑换。`
+          );
+        } else if (canReachWithConversion) {
+          updateWarningClass("caution");
+
+          setText(
+            "warningLevel",
+            "需要兑换蓝钻"
+          );
+
+          setText(
+            "warningHeading",
+            `可以完成计划，但需要补充颜料`
+          );
+
+          setText(
+            "warningText",
+            `截止日期预计直接拥有` +
+            `${formatNumber(
+              paintState.paint
+            )}个普通颜料，` +
+            `还差${formatNumber(
+              missingDirectPaint
+            )}个。需要使用` +
+            `${formatNumber(
+              requiredConvertDiamond
+            )}个蓝钻兑换，` +
+            `达标后预计剩余` +
+            `${formatNumber(
+              remainingDiamondAfterTarget
+            )}个蓝钻。请注意兑换后会降低后续活动的蓝钻储备。`
+          );
+        } else if (futureResult.reached) {
+          updateWarningClass("danger");
+
+          setText(
+            "warningLevel",
+            "截止日期资源不足"
+          );
+
+          setText(
+            "warningHeading",
+            `不推荐按当前截止日期冲刺${activityName}`
+          );
+
+          setText(
+            "warningText",
+            `截止日期即使将剩余蓝钻全部按150个兑换，` +
+            `预计最多也只有${formatNumber(
+              maximumPaint
+            )}个普通颜料，` +
+            `距离目标仍差${formatNumber(
+              finalPaintGap
+            )}个。按照当前身份继续积累，` +
+            `预计还需要${formatNumber(
+              futureResult.daysAfterDeadline
+            )}天达到目标。`
+          );
+        } else {
+          updateWarningClass("critical");
+
+          setText(
+            "warningLevel",
+            "高风险"
+          );
+
+          setText(
+            "warningHeading",
+            `未来3个月内仍无法达到${activityName}`
+          );
+
+          setText(
+            "warningText",
+            `截止日期即使将蓝钻全部兑换，` +
+            `预计最多只有${formatNumber(
+              maximumPaint
+            )}个普通颜料，` +
+            `距离目标仍差${formatNumber(
+              finalPaintGap
+            )}个。保持当前身份继续积累，` +
+            `预测至${formatChineseDate(
+              forecastEnd
+            )}仍无法达到目标，不推荐冲刺。`
+          );
+        }
+
+        if (paintState.paint >= target) {
+          setText(
+            "futureForecastText",
+            `截止日期已经可以直接达到目标，` +
+            `无需等待未来预测。蓝钻可继续保留，` +
+            `也可以根据后续活动安排决定是否兑换。`
+          );
+        } else if (canReachWithConversion) {
+          setText(
+            "futureForecastText",
+            `截止日期可用${formatNumber(requiredConvertDiamond)}个蓝钻补足` +
+            `${formatNumber(missingDirectPaint)}个普通颜料并完成计划。` +
+            `150蓝钻兑换仅作为资源不足时的补足方案。`
+          );
+        } else if (futureResult.reached) {
+          setText(
+            "futureForecastText",
+            `保持当前月卡、季卡身份不变，并继续完成签到、` +
+            `每日任务、每周转发和可用的月卡兑换，` +
+            `预计最早在${formatChineseDate(
+              futureResult.date
+            )}达到${activityName}，` +
+            `比当前截止日期晚` +
+            `${formatNumber(
+              futureResult.daysAfterDeadline
+            )}天。`
+          );
+        } else {
+          setText(
+            "futureForecastText",
+            `预测范围为${formatChineseDate(
+              endDate
+            )}之后至${formatChineseDate(
+              forecastEnd
+            )}。保持当前身份和资源获取方式不变，` +
+            `未来3个月内仍无法达到${activityName}。`
+          );
+        }
+
+        const rerunCard =
+          getElement("rerunCard");
+
+        if (plan.rerunCount > 0) {
+          rerunCard.style.display = "block";
+
+          const rerunRecovery =
+            calculatePlanRecovery(
+              paintState,
+              endDate,
+              forecastEnd,
+              target,
+              {
+                ...commonOptions,
+                allowMonthlyExchange: true
+              }
+            );
+
+          if (!rerunRecovery.canRush) {
+            setText(
+              "rerunForecastText",
+              `截止日期的资源无法完成全部活动计划，因此暂不计算计划完成后的70颜料恢复时间。`
+            );
+          } else if (
+            rerunRecovery.reached &&
+            rerunRecovery.days === 0
+          ) {
+            setText(
+              "rerunForecastText",
+              `完成全部计划后，仍可立即满足下一次70个普通颜料的小保底。` +
+              `完成计划时需使用${formatNumber(rerunRecovery.conversionDiamond)}个蓝钻补足颜料。`
+            );
+          } else if (rerunRecovery.reached) {
+            setText(
+              "rerunForecastText",
+              `如果在${formatChineseDate(
+                endDate
+              )}完成全部活动计划，` +
+              `其中需使用${formatNumber(rerunRecovery.conversionDiamond)}个蓝钻补足颜料。` +
+              `预计需要${formatNumber(
+                rerunRecovery.days
+              )}天，最早在${formatChineseDate(
+                rerunRecovery.date
+              )}重新具备70个普通颜料的小保底能力。`
+            );
+          } else {
+            setText(
+              "rerunForecastText",
+              `完成全部活动计划后，` +
+              `按本次填写的会员状态继续积累，` +
+              `到${formatChineseDate(
+                forecastEnd
+              )}仍无法重新达到70个普通颜料的小保底。` +
+              `后续资源存在较长恢复期。`
+            );
+          }
+        } else {
+          rerunCard.style.display = "none";
+        }
+
+        setText(
+          "earnedDiamond",
+          `${formatNumber(
+            earnedDiamond
+          )}个`
+        );
+
+        setText(
+          "signInDiamond",
+          `${formatNumber(
+            diamondState.totals.signInDiamond
+          )}个`
+        );
+
+        setText(
+          "dailyTaskDiamond",
+          `${formatNumber(
+            diamondState.totals.dailyTaskDiamond
+          )}个`
+        );
+
+        setText(
+          "shareDiamond",
+          `${formatNumber(
+            diamondState.totals.shareDiamond
+          )}个`
+        );
+
+        setText(
+          "monthlyCardDiamond",
+          `${formatNumber(
+            diamondState.totals.monthlyCardDiamond
+          )}个`
+        );
+
+        setText(
+          "seasonCardDiamond",
+          `${formatNumber(
+            diamondState.totals.seasonCardDiamond
+          )}个`
+        );
+
+        setText(
+          "directPaint",
+          `${formatNumber(
+            diamondState.totals.directPaint
+          )}个`
+        );
+
+        setText(
+          "calculationDays",
+          `${formatNumber(
+            diamondState.totals.days
+          )}天`
+        );
+
+        setText(
+          "naturalWeekCount",
+          `${formatNumber(
+            diamondState.sharedWeeks.size
+          )}周`
+        );
+
+        setText(
+          "exchangeCount",
+          `${formatNumber(
+            exchangeCount
+          )}次`
+        );
+
+        setText(
+          "exchangeDiamondCost",
+          `${formatNumber(
+            exchangeDiamondCost
+          )}个`
+        );
+
+        setText(
+          "exchangePaintGain",
+          `${formatNumber(
+            exchangePaintGain
+          )}个`
+        );
+
+        setText(
+          "signInNote",
+          hasMonthlyCard
+            ? "已包含月卡2倍签到"
+            : "按基础签到计算"
+        );
+
+        let identityText = "普通用户";
+
+        if (
+          hasMonthlyCard &&
+          hasSeasonCard
+        ) {
+          identityText =
+            "月卡、季卡";
+        } else if (hasMonthlyCard) {
+          identityText =
+            "月卡";
+        } else if (hasSeasonCard) {
+          identityText =
+            "季卡";
+        }
+
+        setText(
+          "resultRange",
+          `用户权益：${identityText}；` +
+          `活动计划：${planText}，共需${formatNumber(target)}个普通颜料；` +
+          `当前资源：${formatNumber(
+            currentDiamond
+          )}个蓝钻、` +
+          `${formatNumber(
+            currentPaint
+          )}个普通颜料；` +
+          `计算范围：${formatChineseDate(
+            startDate
+          )}之后至${formatChineseDate(
+            endDate
+          )}，包含截止日期当天。`
+        );
+
+        result.style.display = "block";
+
+        result.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+    );
+
+    resetButton.addEventListener(
+      "click",
+      function () {
+        const confirmed = window.confirm(
+          "确定要清空当前填写内容和计算结果吗？"
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
+        currentDiamondInput.value = "0";
+        currentPaintInput.value = "0";
+
+        hasMonthlyCardInput.checked = false;
+        hasSeasonCardInput.checked = false;
+
+        rerunCountInput.value = "0";
+        currentEventCountInput.value = "1";
+        document.querySelector('input[name="currentTier"][value="120"]').checked = true;
+        updateActivitySummary();
+
+        startDateInput.value =
+          formatInputDate(new Date());
+
+        endDateInput.value = "";
+
+        hideMessage();
+        result.style.display = "none";
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      }
+    );
+
+    startDateInput.value =
+      formatInputDate(new Date());
+
+    rerunCountInput.addEventListener("input", updateActivitySummary);
+    currentEventCountInput.addEventListener("input", updateActivitySummary);
+    document.querySelectorAll('input[name="currentTier"]').forEach(
+      input => input.addEventListener("change", updateActivitySummary)
+    );
+    updateActivitySummary();
+  </script>
+</body>
+</html>
